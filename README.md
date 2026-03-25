@@ -1,5 +1,8 @@
 # sf-enhanced-note-template
 
+<img width="831" height="420" alt="image" src="https://github.com/user-attachments/assets/175b53fe-7f46-4c3f-b71b-7b6760043fe6" />
+
+
 ## Note Template Selector
 
 A generic Lightning Web Component that lets users create standardised Notes on any Salesforce record using pre-defined templates managed in Custom Metadata. Templates are automatically filtered by object type — no code changes needed to support new objects.
