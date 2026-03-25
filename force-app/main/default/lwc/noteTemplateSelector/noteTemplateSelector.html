@@ -1,0 +1,84 @@
+<template>
+    <lightning-card title="Add Note from Template" icon-name="utility:note">
+
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <div class="slds-p-around_medium">
+
+                <!-- PICKER VIEW -->
+                <template if:false={templateSelected}>
+                    <p class="slds-text-body_small slds-m-bottom_small">
+                        Select a template to get started
+                    </p>
+                    <template for:each={groupedTemplates} for:item="group">
+                        <div key={group.category} class="slds-m-bottom_small">
+                            <p class="category-label slds-m-bottom_x-small">
+                                {group.category}
+                            </p>
+                            <template for:each={group.templates} for:item="tmpl">
+                                <lightning-button
+                                    key={tmpl.Id}
+                                    label={tmpl.Label}
+                                    data-id={tmpl.Id}
+                                    variant="neutral"
+                                    class="slds-m-right_x-small slds-m-bottom_x-small"
+                                    onclick={handleTemplateSelect}>
+                                </lightning-button>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+
+                <!-- EDITOR VIEW -->
+                <template if:true={templateSelected}>
+                    <div class="slds-m-bottom_small">
+                        <button class="back-btn" onclick={handleBack}>
+                            &#8592; Back to templates
+                        </button>
+                    </div>
+
+                    <div class="slds-m-bottom_small">
+                        <lightning-input
+                            label="Note Title"
+                            value={noteTitle}
+                            onchange={handleTitleChange}>
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-bottom_small">
+                        <label class="slds-form-element__label">Note Body</label>
+                        <lightning-input-rich-text
+                            value={noteBody}
+                            onchange={handleBodyChange}
+                            formats={richTextFormats}>
+                        </lightning-input-rich-text>
+                    </div>
+
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col">
+                            <lightning-button
+                                label="Cancel"
+                                onclick={handleBack}>
+                            </lightning-button>
+                        </div>
+                        <div class="slds-col slds-text-align_right">
+                            <lightning-button
+                                label="Save Note"
+                                variant="brand"
+                                icon-name="utility:save"
+                                onclick={handleSave}
+                                disabled={isSaving}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+    </lightning-card>
+</template>
