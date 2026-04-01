@@ -8,6 +8,11 @@
   <img alt="Deploy to Salesforce" src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
 
+**Or deploy via Salesforce CLI:**
+```bash
+sf project deploy start --manifest manifest/package.xml -o <your-org-alias>
+```
+
 ## Note Template Selector
 
 A generic Lightning Web Component that lets users create standardised Notes on any Salesforce record using pre-defined templates managed in Custom Metadata. Templates are automatically filtered by object type — no code changes needed to support new objects.
