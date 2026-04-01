@@ -2,6 +2,9 @@
 
 <img width="831" height="420" alt="image" src="https://github.com/user-attachments/assets/175b53fe-7f46-4c3f-b71b-7b6760043fe6" />
 
+<a href="https://githubsfdeploy.herokuapp.com?owner=cyrilduv&repo=sf-enhanced-note-template&ref=main">
+  <img alt="Deploy to Salesforce" src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
 ## Note Template Selector
 
