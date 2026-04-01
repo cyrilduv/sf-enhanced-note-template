@@ -22,11 +22,8 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Note_Template.Document_Issue_Flagged</members>
         <members>Note_Template.Follow_up_email_sent</members>
-        <members>Note_Template.Missing_Documents_Follow_Up</members>
         <members>Note_Template.Name_of_Template</members>
-        <members>Note_Template.Settlement_Ready</members>
         <members>Note_Template.Stalled_deal_check_in</members>
         <name>CustomMetadata</name>
     </types>

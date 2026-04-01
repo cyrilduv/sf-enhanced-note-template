@@ -40,7 +40,7 @@ All templates for all objects are managed in a single Custom Metadata Type. The 
 | Field API Name | Type | Purpose |
 |---|---|---|
 | `Label` | Text (standard) | Display name of the template (also used as default note title) |
-| `Object_API_Name__c` | Text | API name of the object this template applies to (e.g. `Opportunity`, `Document_Checklist__c`) |
+| `Object_API_Name__c` | Text | API name of the object this template applies to (e.g. `Opportunity`, `Case`) |
 | `Category__c` | Text | Groups templates in the picker UI (e.g. "Follow-up", "Settlement") |
 | `Template_Body__c` | Long Text Area | HTML body of the template |
 | `Sort_Order__c` | Number | Controls display order — lower numbers appear first |
@@ -52,7 +52,7 @@ All templates for all objects are managed in a single Custom Metadata Type. The 
 2. Click **New**
 3. Fill in:
    - **Label** — template name
-   - **Object API Name** — the API name of the target object (e.g. `Opportunity`, `Document_Checklist__c`, `Case`)
+   - **Object API Name** — the API name of the target object (e.g. `Opportunity`, `Case`)
    - **Category** — grouping label
    - **Template Body** — HTML content
    - **Sort Order** — display position (lower = first)
@@ -88,7 +88,7 @@ No code deployment is required — new templates appear immediately.
 
 1. Deploy all components to the target org
 2. Create template records under **Setup > Custom Metadata Types > Note Template > Manage Records**
-   - Set `Object_API_Name__c` to the target object API name (e.g. `Opportunity`, `Document_Checklist__c`)
+   - Set `Object_API_Name__c` to the target object API name (e.g. `Opportunity`, `Case`)
 3. Add the **"Add Note from Template"** component to the record page via Lightning App Builder
 4. Assign the **Note Template Selector** permission set to users
 
@@ -135,9 +135,7 @@ The `NoteTemplateControllerTest` class covers the following scenarios:
 | Test Method | What It Validates |
 |---|---|
 | `testGetTemplatesForOpportunity` | Templates query returns a non-null list when called with an Opportunity ID |
-| `testGetTemplatesForDocChecklist` | Templates query returns a non-null list when called with a Document Checklist ID |
 | `testSaveNoteOnOpportunity` | Note is created with correct title and linked to the Opportunity |
-| `testSaveNoteOnDocChecklist` | Note is created with correct title and linked to the Document Checklist |
 | `testSaveNoteHandlesNullBody` | Null body is handled gracefully without errors |
 
 ---
@@ -155,9 +153,6 @@ When deploying to production, include the following in the change set:
 | Custom Metadata Record | `Note_Template.Name_of_Template` |
 | Custom Metadata Record | `Note_Template.Follow_up_email_sent` |
 | Custom Metadata Record | `Note_Template.Stalled_deal_check_in` |
-| Custom Metadata Record | `Note_Template.Missing_Documents_Follow_Up` |
-| Custom Metadata Record | `Note_Template.Settlement_Ready` |
-| Custom Metadata Record | `Note_Template.Document_Issue_Flagged` |
 | Permission Set | `Note_Template_Selector` |
 
 When validating, run specified tests: `NoteTemplateControllerTest`

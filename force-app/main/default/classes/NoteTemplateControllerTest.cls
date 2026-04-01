@@ -14,12 +14,7 @@ private class NoteTemplateControllerTest {
         );
         insert opp;
 
-        Document_Checklist__c dc = new Document_Checklist__c(
-            Opportunity__c  = opp.Id,
-            Account_Name__c = acc.Id
-        );
-        insert dc;
-    }
+}
 
     @isTest
     static void testGetTemplatesForOpportunity() {
@@ -28,19 +23,6 @@ private class NoteTemplateControllerTest {
         Test.startTest();
         List<Note_Template__mdt> templates =
             NoteTemplateController.getTemplates(opp.Id);
-        Test.stopTest();
-
-        System.assertNotEquals(null, templates,
-            'getTemplates should never return null');
-    }
-
-    @isTest
-    static void testGetTemplatesForDocChecklist() {
-        Document_Checklist__c dc = [SELECT Id FROM Document_Checklist__c LIMIT 1];
-
-        Test.startTest();
-        List<Note_Template__mdt> templates =
-            NoteTemplateController.getTemplates(dc.Id);
         Test.stopTest();
 
         System.assertNotEquals(null, templates,
@@ -73,36 +55,6 @@ private class NoteTemplateControllerTest {
             LIMIT 1
         ];
         System.assertEquals(opp.Id,      link.LinkedEntityId, 'Note should be linked to the Opportunity');
-        System.assertEquals('V',         link.ShareType,      'ShareType should be Viewer');
-        System.assertEquals('AllUsers',  link.Visibility,     'Visibility should be AllUsers');
-    }
-
-    @isTest
-    static void testSaveNoteOnDocChecklist() {
-        Document_Checklist__c dc = [SELECT Id FROM Document_Checklist__c LIMIT 1];
-
-        String testTitle = 'Settlement checklist note – Test';
-        String testBody  = '<p>Documents verified:</p><ul><li>Invoice</li></ul>';
-
-        Test.startTest();
-        Id noteId = NoteTemplateController.saveNote(
-            testTitle, testBody, dc.Id);
-        Test.stopTest();
-
-        ContentNote note = [
-            SELECT Id, Title FROM ContentNote WHERE Id = :noteId
-        ];
-        System.assertEquals(testTitle, note.Title,
-            'Note title should match');
-
-        ContentDocumentLink link = [
-            SELECT Id, LinkedEntityId, ShareType, Visibility
-            FROM ContentDocumentLink
-            WHERE ContentDocumentId = :noteId
-              AND LinkedEntityId = :dc.Id
-            LIMIT 1
-        ];
-        System.assertEquals(dc.Id,       link.LinkedEntityId, 'Note should be linked to the Document Checklist');
         System.assertEquals('V',         link.ShareType,      'ShareType should be Viewer');
         System.assertEquals('AllUsers',  link.Visibility,     'Visibility should be AllUsers');
     }

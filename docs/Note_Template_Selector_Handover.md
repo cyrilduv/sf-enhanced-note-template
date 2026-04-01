@@ -37,7 +37,7 @@ All templates for all objects are managed in a single Custom Metadata Type. The 
 | Field API Name | Type | Purpose |
 |---|---|---|
 | `Label` | Text (standard) | Display name of the template (also used as default note title) |
-| `Object_API_Name__c` | Text | API name of the object this template applies to (e.g. `Opportunity`, `Document_Checklist__c`) |
+| `Object_API_Name__c` | Text | API name of the object this template applies to (e.g. `Opportunity`, `Case`) |
 | `Category__c` | Text | Groups templates in the picker UI (e.g. "Follow-up", "Settlement") |
 | `Template_Body__c` | Long Text Area | HTML body of the template |
 | `Sort_Order__c` | Number | Controls display order — lower numbers appear first |
@@ -49,7 +49,7 @@ All templates for all objects are managed in a single Custom Metadata Type. The 
 2. Click **New**
 3. Fill in:
    - **Label** — template name
-   - **Object API Name** — the API name of the target object (e.g. `Opportunity`, `Document_Checklist__c`, `Case`)
+   - **Object API Name** — the API name of the target object (e.g. `Opportunity`, `Case`)
    - **Category** — grouping label
    - **Template Body** — HTML content
    - **Sort Order** — display position (lower = first)
@@ -67,14 +67,6 @@ No code deployment is required — new templates appear immediately.
 | Hello | Hello | 1 |
 | Follow-up email sent | Follow-up | 2 |
 | Stalled deal check-in | Pipeline review | 3 |
-
-#### Document Checklist (`Object_API_Name__c = Document_Checklist__c`)
-
-| Template | Category | Sort Order |
-|---|---|---|
-| Missing Documents Follow-Up | Follow-up | 1 |
-| Settlement Ready | Settlement | 2 |
-| Document Issue Flagged | Issues | 3 |
 
 ---
 
@@ -142,9 +134,7 @@ The `NoteTemplateControllerTest` class covers the following scenarios:
 | Test Method | What It Validates |
 |---|---|
 | `testGetTemplatesForOpportunity` | Templates query returns a non-null list when called with an Opportunity ID |
-| `testGetTemplatesForDocChecklist` | Templates query returns a non-null list when called with a Document Checklist ID |
 | `testSaveNoteOnOpportunity` | Note is created with correct title and linked to the Opportunity |
-| `testSaveNoteOnDocChecklist` | Note is created with correct title and linked to the Document Checklist |
 | `testSaveNoteHandlesNullBody` | Null body is handled gracefully without errors |
 
 ---
