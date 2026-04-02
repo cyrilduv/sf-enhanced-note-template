@@ -1,8 +1,19 @@
+/**
+ * @description Controller for the Note Template Selector LWC.
+ * Provides methods to retrieve note templates and save notes to records.
+ */
 public with sharing class NoteTemplateController {
 
+    /**
+     * @description Returns active Note_Template__mdt records whose Object_API_Name__c
+     * matches the SObject type of the given recordId.
+     * @param recordId The record to look up templates for
+     * @return List of matching active templates ordered by Sort_Order__c
+     */
     @AuraEnabled(cacheable=true)
     public static List<Note_Template__mdt> getTemplates(Id recordId) {
-        String objectApiName = recordId.getSObjectType().getDescribe().getName();
+        SObjectType sObjType = recordId.getSObjectType();
+        String objectApiName = String.valueOf(sObjType);
         return [
             SELECT Id, Label, Category__c, Template_Body__c, Sort_Order__c
             FROM Note_Template__mdt
@@ -13,6 +24,14 @@ public with sharing class NoteTemplateController {
         ];
     }
 
+    /**
+     * @description Creates a ContentNote with the given title and body, then links it
+     * to the specified record via ContentDocumentLink.
+     * @param title    The note title (required)
+     * @param body     The rich-text note body
+     * @param recordId The record to attach the note to
+     * @return The Id of the newly created ContentNote
+     */
     @AuraEnabled
     public static Id saveNote(String title, String body, Id recordId) {
         if (String.isBlank(title)) {

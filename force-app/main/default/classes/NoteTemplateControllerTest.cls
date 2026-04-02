@@ -117,7 +117,7 @@ private class NoteTemplateControllerTest {
     @isTest
     static void testSaveNoteWithInvalidRecordIdThrowsError() {
         // Use a fabricated Id that won't match a real record
-        Id fakeOppId = Opportunity.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+        Id fakeOppId = Id.valueOf('006000000000000AAA'); //NOPMD - intentionally fabricated for negative test
 
         Test.startTest();
         try {

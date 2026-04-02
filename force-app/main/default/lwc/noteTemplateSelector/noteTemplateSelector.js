@@ -34,18 +34,21 @@ export default class NoteTemplateSelector extends LightningElement {
 
     // Group templates by category for the picker UI
     get groupedTemplates() {
-        const sorted = [...this.templates].sort((a, b) => {
-            const orderDiff = (a.Sort_Order__c ?? 999) - (b.Sort_Order__c ?? 999);
-            if (orderDiff !== 0) return orderDiff;
-            return (a.Category__c || 'General').localeCompare(b.Category__c || 'General');
+        const defaultOrder = 999;
+        const sorted = [...this.templates].sort((itemA, itemB) => {
+            const orderDiff = (itemA.Sort_Order__c ?? defaultOrder) - (itemB.Sort_Order__c ?? defaultOrder);
+            if (orderDiff !== 0) {
+                return orderDiff;
+            }
+            return (itemA.Category__c || 'General').localeCompare(itemB.Category__c || 'General');
         });
         const groups = new Map();
-        sorted.forEach(t => {
-            const cat = t.Category__c || 'General';
+        sorted.forEach((template) => {
+            const cat = template.Category__c || 'General';
             if (!groups.has(cat)) {
                 groups.set(cat, { category: cat, templates: [] });
             }
-            groups.get(cat).templates.push(t);
+            groups.get(cat).templates.push(template);
         });
         return [...groups.values()];
     }
@@ -53,8 +56,10 @@ export default class NoteTemplateSelector extends LightningElement {
     // Event handlers
     handleTemplateSelect(event) {
         const selectedId = event.target.dataset.id;
-        const tmpl = this.templates.find(t => t.Id === selectedId);
-        if (!tmpl) return;
+        const tmpl = this.templates.find((template) => template.Id === selectedId);
+        if (!tmpl) {
+            return;
+        }
 
         this.noteTitle        = tmpl.Label;
         this.noteBody         = tmpl.Template_Body__c || '';
@@ -83,9 +88,9 @@ export default class NoteTemplateSelector extends LightningElement {
         this.isSaving = true;
         try {
             await saveNote({
-                title:    this.noteTitle,
                 body:     this.noteBody,
-                recordId: this.recordId
+                recordId: this.recordId,
+                title:    this.noteTitle
             });
             this.showToast('Success', 'Note saved successfully', 'success');
             getRecordNotifyChange([{ recordId: this.recordId }]);
@@ -103,6 +108,6 @@ export default class NoteTemplateSelector extends LightningElement {
 
     // Helpers
     showToast(title, message, variant) {
-        this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
+        this.dispatchEvent(new ShowToastEvent({ message, title, variant }));
     }
 }
