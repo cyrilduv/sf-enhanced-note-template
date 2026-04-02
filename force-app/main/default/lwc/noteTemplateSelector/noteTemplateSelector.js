@@ -89,10 +89,7 @@ export default class NoteTemplateSelector extends LightningElement {
             });
             this.showToast('Success', 'Note saved successfully', 'success');
             getRecordNotifyChange([{ recordId: this.recordId }]);
-            setTimeout(() => {
-                this.handleBack();
-                window.location.reload();
-            }, 1500);
+            this.handleBack();
         } catch (error) {
             this.showToast(
                 'Error',

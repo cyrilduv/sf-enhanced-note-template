@@ -15,12 +15,12 @@ public with sharing class NoteTemplateController {
 
     @AuraEnabled
     public static Id saveNote(String title, String body, Id recordId) {
+        if (String.isBlank(title)) {
+            AuraHandledException ex = new AuraHandledException('Title is required');
+            ex.setMessage('Title is required');
+            throw ex;
+        }
         try {
-            if (String.isBlank(title)) {
-                AuraHandledException ex = new AuraHandledException('Title is required');
-                ex.setMessage('Title is required');
-                throw ex;
-            }
             ContentNote note = new ContentNote();
             note.Title   = title;
             note.Content = Blob.valueOf(body != null ? body : '');

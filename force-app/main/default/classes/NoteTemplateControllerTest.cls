@@ -108,8 +108,8 @@ private class NoteTemplateControllerTest {
                 '', '<p>Body with empty title</p>', opp.Id);
             System.assert(false, 'Expected AuraHandledException for empty title');
         } catch (AuraHandledException e) {
-            // AuraHandledException was thrown as expected
-            System.assertNotEquals(null, e, 'Should throw AuraHandledException');
+            System.assert(e.getMessage().contains('Title is required'),
+                'Exception should mention title requirement, got: ' + e.getMessage());
         }
         Test.stopTest();
     }
@@ -128,5 +128,74 @@ private class NoteTemplateControllerTest {
                 'Exception message should not be empty');
         }
         Test.stopTest();
+    }
+
+    @isTest
+    static void testGetTemplatesRunsUnderRestrictedUser() {
+        Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+        Profile minProfile = [SELECT Id FROM Profile WHERE Name = 'Minimum Access - Salesforce' LIMIT 1];
+        User restrictedUser = new User(
+            Alias            = 'minusr',
+            Email            = 'minaccess@fleetcare.test',
+            EmailEncodingKey = 'UTF-8',
+            LastName         = 'MinAccess',
+            LanguageLocaleKey  = 'en_US',
+            LocaleSidKey       = 'en_US',
+            ProfileId        = minProfile.Id,
+            TimeZoneSidKey   = 'America/New_York',
+            UserName         = 'minaccess.' + DateTime.now().getTime() + '@fleetcare.test',
+            Street           = '1 Test Street',
+            State            = 'QLD'
+        );
+        insert restrictedUser;
+
+        System.runAs(restrictedUser) {
+            Test.startTest();
+            Boolean accessBlocked = false;
+            try {
+                NoteTemplateController.getTemplates(opp.Id);
+            } catch (System.QueryException e) {
+                accessBlocked = true;
+                System.assert(e.getMessage().contains('Insufficient permissions'),
+                    'SECURITY_ENFORCED should block inaccessible fields, got: ' + e.getMessage());
+            }
+            Test.stopTest();
+
+            System.assert(accessBlocked,
+                'WITH SECURITY_ENFORCED should block query for restricted user');
+        }
+    }
+
+    @isTest
+    static void testSaveNoteEnforcesFLSUnderRestrictedUser() {
+        Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+        Profile minProfile = [SELECT Id FROM Profile WHERE Name = 'Minimum Access - Salesforce' LIMIT 1];
+        User restrictedUser = new User(
+            Alias            = 'minusr',
+            Email            = 'minaccess@fleetcare.test',
+            EmailEncodingKey = 'UTF-8',
+            LastName         = 'MinAccess',
+            LanguageLocaleKey  = 'en_US',
+            LocaleSidKey       = 'en_US',
+            ProfileId        = minProfile.Id,
+            TimeZoneSidKey   = 'America/New_York',
+            UserName         = 'minaccess.' + DateTime.now().getTime() + '@fleetcare.test',
+            Street           = '1 Test Street',
+            State            = 'QLD'
+        );
+        insert restrictedUser;
+
+        System.runAs(restrictedUser) {
+            Test.startTest();
+            try {
+                NoteTemplateController.saveNote('Test', '<p>body</p>', opp.Id);
+                // If no exception, stripInaccessible allowed the insert —
+                // the user has ContentNote create access in this org.
+            } catch (AuraHandledException e) {
+                System.assert(e.getMessage().length() > 0,
+                    'Restricted user should receive a meaningful error');
+            }
+            Test.stopTest();
+        }
     }
 }

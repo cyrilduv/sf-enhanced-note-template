@@ -175,10 +175,6 @@ describe("c-note-template-selector", () => {
             const handler = jest.fn();
             element.addEventListener(ShowToastEventName, handler);
 
-            const saveBtn = element.shadowRoot.querySelector(
-                'lightning-button[data-id="m00000000000001"]'
-            );
-            // Find save button by variant
             const allButtons =
                 element.shadowRoot.querySelectorAll("lightning-button");
             const saveBtnEl = Array.from(allButtons).find(
