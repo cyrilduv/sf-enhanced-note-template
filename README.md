@@ -9,9 +9,18 @@
 </a>
 
 **Or deploy via Salesforce CLI:**
+
+Sandbox:
 ```bash
 sf project deploy start --manifest manifest/package.xml -o <your-org-alias>
 ```
+
+Production (runs only the included test class instead of all tests in the org):
+```bash
+sf project deploy start --manifest manifest/package.xml -o <your-org-alias> --test-level RunSpecifiedTests --tests NoteTemplateControllerTest
+```
+
+> **Note:** The one-click deploy button works best with sandboxes. For production deployments, use the CLI command above — it runs only the package's test class (`NoteTemplateControllerTest`) instead of all local tests in the org, avoiding failures caused by unrelated tests.
 
 ## Note Template Selector
 

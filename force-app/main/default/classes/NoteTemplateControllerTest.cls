@@ -13,8 +13,7 @@ private class NoteTemplateControllerTest {
             AccountId = acc.Id
         );
         insert opp;
-
-}
+    }
 
     @isTest
     static void testGetTemplatesForOpportunity() {
@@ -27,6 +26,28 @@ private class NoteTemplateControllerTest {
 
         System.assertNotEquals(null, templates,
             'getTemplates should never return null');
+        // Templates are filtered by Object_API_Name__c in the WHERE clause,
+        // so all returned records belong to Opportunity by definition.
+        // Verify the result is a usable list (field access works).
+        for (Note_Template__mdt t : templates) {
+            System.assertNotEquals(null, t.Label,
+                'Each template should have a Label');
+        }
+    }
+
+    @isTest
+    static void testGetTemplatesForObjectWithNoTemplates() {
+        Account acc = [SELECT Id FROM Account LIMIT 1];
+
+        Test.startTest();
+        List<Note_Template__mdt> templates =
+            NoteTemplateController.getTemplates(acc.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, templates,
+            'getTemplates should return an empty list, not null');
+        System.assertEquals(0, templates.size(),
+            'No templates should exist for Account in this test context');
     }
 
     @isTest
@@ -45,7 +66,7 @@ private class NoteTemplateControllerTest {
             SELECT Id, Title FROM ContentNote WHERE Id = :noteId
         ];
         System.assertEquals(testTitle, note.Title,
-            'Note title should match');
+            'Note title should match the provided title');
 
         ContentDocumentLink link = [
             SELECT Id, LinkedEntityId, ShareType, Visibility
@@ -68,7 +89,44 @@ private class NoteTemplateControllerTest {
             'Null body test', null, opp.Id);
         Test.stopTest();
 
+        ContentNote note = [
+            SELECT Id, Title, Content FROM ContentNote WHERE Id = :noteId
+        ];
+        System.assertEquals('Null body test', note.Title,
+            'Title should match even when body is null');
         System.assertNotEquals(null, noteId,
             'A valid note Id should be returned even with null body');
+    }
+
+    @isTest
+    static void testSaveNoteHandlesEmptyTitleThrowsError() {
+        Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+
+        Test.startTest();
+        try {
+            NoteTemplateController.saveNote(
+                '', '<p>Body with empty title</p>', opp.Id);
+            System.assert(false, 'Expected AuraHandledException for empty title');
+        } catch (AuraHandledException e) {
+            // AuraHandledException was thrown as expected
+            System.assertNotEquals(null, e, 'Should throw AuraHandledException');
+        }
+        Test.stopTest();
+    }
+
+    @isTest
+    static void testSaveNoteWithInvalidRecordIdThrowsError() {
+        // Use a fabricated Id that won't match a real record
+        Id fakeOppId = Opportunity.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+
+        Test.startTest();
+        try {
+            NoteTemplateController.saveNote('Test', '<p>body</p>', fakeOppId);
+            System.assert(false, 'Expected AuraHandledException for invalid record Id');
+        } catch (AuraHandledException e) {
+            System.assert(e.getMessage().length() > 0,
+                'Exception message should not be empty');
+        }
+        Test.stopTest();
     }
 }

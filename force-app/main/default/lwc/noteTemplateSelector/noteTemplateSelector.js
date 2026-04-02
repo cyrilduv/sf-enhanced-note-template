@@ -20,7 +20,7 @@ export default class NoteTemplateSelector extends LightningElement {
         'strike', 'list', 'indent', 'align', 'link', 'clean'
     ];
 
-    // ── Wire: templates filtered by object type (cacheable) ───────────────
+    // Wire: templates filtered by object type
     @wire(getTemplates, { recordId: '$recordId' })
     wiredTemplates({ error, data }) {
         if (data) {
@@ -32,7 +32,7 @@ export default class NoteTemplateSelector extends LightningElement {
         }
     }
 
-    // ── Group templates by Category__c for the picker UI ──────────────────
+    // Group templates by category for the picker UI
     get groupedTemplates() {
         const sorted = [...this.templates].sort((a, b) => {
             const orderDiff = (a.Sort_Order__c ?? 999) - (b.Sort_Order__c ?? 999);
@@ -50,7 +50,7 @@ export default class NoteTemplateSelector extends LightningElement {
         return [...groups.values()];
     }
 
-    // ── Event handlers ─────────────────────────────────────────────────────
+    // Event handlers
     handleTemplateSelect(event) {
         const selectedId = event.target.dataset.id;
         const tmpl = this.templates.find(t => t.Id === selectedId);
@@ -104,7 +104,7 @@ export default class NoteTemplateSelector extends LightningElement {
         }
     }
 
-    // ── Helpers ────────────────────────────────────────────────────────────
+    // Helpers
     showToast(title, message, variant) {
         this.dispatchEvent(new ShowToastEvent({ title, message, variant }));
     }
